@@ -24,32 +24,25 @@ const askForPermissionToReceiveNotifications = async () => {
 
             const vapObject = { vapidKey: "BDuvg6oBLy1LgyPciZw8WVk9sfxwAzfjc1BvhZQBsu3Rr64RVHBtuQUxuk5oou7LM7NZIfHYewvPvzPnD7phKzA" };
 
-            return getToken(messaging, vapObject).then((currentToken) => {
-                if (currentToken) {
-                    return { 'status': 200, token: currentToken, message: `Your token is: ${currentToken}` };
-                } else {
-                    return { 'status': 500, message: `No registration token available. Request permission to generate one.`, token: "default" };
-                }
-            }).catch((error: any) => {
-                throw { 'status': 500, message: error.message, token: "default" };
+            return getToken(messaging, vapObject).then((currentToken) => currentToken).catch((error: any) => {
+                throw error;
             });
 
         } else {
-            return { 'status': 500, message: `Notification permission denied.`, token: "default" };
+            return "default";
         }
 
     } catch (error: any) {
-        return { 'status': 500, message: error.message, token: "default" };
+        throw new Error(error.message);
     }
 };
 
-const onMessageListener = () => {
-    return new Promise((resolve) => {
+export const onMessageListener = () =>
+    new Promise((resolve) => {
         onMessage(messaging, (payload) => {
             resolve(payload);
         });
     });
-}
 
-export { messaging, askForPermissionToReceiveNotifications, onMessageListener };
+export { messaging, askForPermissionToReceiveNotifications };
 export default app;

@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useEffect, useState } from "react";
+import { onMessageListener, askForPermissionToReceiveNotifications } from "./Helpers/Firebase";
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    const [macAddress, setMacAddress] = useState("default");
+
+    useEffect(() => {
+        askForPermissionToReceiveNotifications().then(({ token, message }) => {
+            console.log('askForPermissionToReceiveNotifications', message);
+            setMacAddress(token);
+        });
+
+    }, []);
+
+    useEffect(() => {
+        onMessageListener().then((message) => {
+            console.log('message', message);
+        }).catch(err => console.log('failed: ', err));
+    }, [onMessageListener]);
+
+    console.log('macAddress', macAddress);
+    
+    return (
+        <div className="App">
+            Code will go here!
+        </div>
+    );
 }
 
 export default App;
